@@ -47,14 +47,31 @@ def get_client():
 # -------------------------------
 # Summarize function
 # -------------------------------
+def summarize(transcript, prompt):
+    client = get_client()
+    response = client.chat.completions.create(
+        model="llama-3.1-70b-versatile",   # You can change to another Groq model
+        messages=[
+            {"role": "system", "content": prompt},
+            {"role": "user", "content": transcript}
+        ],
+        temperature=0.7,
+    )
+    return response.choices[0].message.content.strip()
 
+
+# -------------------------------
+# API Routes
+# -------------------------------
 @app.route("/summarize", methods=["POST"])
 def summarize_route():
     data = request.json
     transcript = data.get("transcript")
     prompt = data.get("prompt", "Summarize in bullet points")
+
     if not transcript:
         return jsonify({"error": "Transcript is required"}), 400
+
     try:
         summary = summarize(transcript, prompt)
         return jsonify({"summary": summary})
@@ -63,13 +80,10 @@ def summarize_route():
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
 
-# -------------------------------
-# API Routes
-# -------------------------------
+
 @app.route("/health")
 def health_check():
     return "Backend is running!"
-
 
 
 @app.route("/share", methods=["POST"])
