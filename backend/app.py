@@ -27,6 +27,9 @@ def serve_frontend(path):
 # -------------------------------
 # Initialize Groq client
 # -------------------------------
+# -------------------------------
+# Initialize Groq client safely
+# -------------------------------
 _client = None
 def get_client():
     global _client
@@ -34,12 +37,18 @@ def get_client():
         key = os.environ.get("GROQ_API_KEY")
         if not key:
             raise RuntimeError("GROQ_API_KEY is not set")
-        _client = Groq(api_key=key)
-          os.environ.pop("HTTP_PROXY", None)
+
+        # Remove proxy environment variables that can break Groq client
+        os.environ.pop("HTTP_PROXY", None)
         os.environ.pop("HTTPS_PROXY", None)
         os.environ.pop("http_proxy", None)
         os.environ.pop("https_proxy", None)
+
+        # Create Groq client
+        _client = Groq(api_key=key)
+
     return _client
+
 
 
 # -------------------------------
