@@ -18,7 +18,7 @@ def serve_frontend(path):
     if path != "" and os.path.exists(full_path):
         return send_from_directory(app.static_folder, path)
     # default to index.html if path does not exist
-    return send_from_directory(app.static_folder, "index.html")
+    return send_from_directory(app.static_folder, "App.js")
 
 # -------------------------------
 # Initialize Groq client
