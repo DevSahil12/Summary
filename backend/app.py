@@ -5,20 +5,20 @@ from groq import Groq
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 
-app = Flask(__name__, static_folder="../frontend/src")  # single Flask app
+# Point Flask to React build folder
+app = Flask(__name__, static_folder="../frontend/build", static_url_path="/")
 CORS(app)  # allow requests from frontend
 
 # -------------------------------
-# Serve frontend
+# Serve React frontend
 # -------------------------------
 @app.route("/", defaults={"path": ""})
 @app.route("/<path:path>")
 def serve_frontend(path):
-    full_path = os.path.join(app.static_folder, path)
-    if path != "" and os.path.exists(full_path):
+    if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
         return send_from_directory(app.static_folder, path)
-    # default to index.html if path does not exist
-    return send_from_directory(app.static_folder, "App.js")
+    return send_from_directory(app.static_folder, "index.html")
+
 
 # -------------------------------
 # Initialize Groq client
@@ -32,6 +32,7 @@ def get_client():
             raise RuntimeError("GROQ_API_KEY is not set")
         _client = Groq(api_key=key)
     return _client
+
 
 # -------------------------------
 # Summarize function
@@ -50,6 +51,7 @@ def summarize(transcript: str, instruction: str) -> str:
         ],
     )
     return resp.choices[0].message.content or ""
+
 
 # -------------------------------
 # API Routes
@@ -100,6 +102,7 @@ def share():
             results.append({"email": email, "status": "Failed", "error": str(e)})
 
     return jsonify({"status": "success", "results": results})
+
 
 # -------------------------------
 # Run app
