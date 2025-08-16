@@ -5,7 +5,7 @@ from groq import Groq
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 
-app = Flask(__name__, static_folder="frontend")  # single Flask app
+app = Flask(__name__, static_folder="frontend/src")  # single Flask app
 CORS(app)  # allow requests from frontend
 
 # -------------------------------
