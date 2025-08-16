@@ -5,13 +5,17 @@ from groq import Groq
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 
-# Absolute path to frontend build folder
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-FRONTEND_FOLDER = os.path.join(BASE_DIR, "../frontend/build")
+# ---------------------------------------
+# Fix Render proxy issue (remove env vars)
+# ---------------------------------------
+os.environ.pop("HTTP_PROXY", None)
+os.environ.pop("HTTPS_PROXY", None)
+os.environ.pop("http_proxy", None)
+os.environ.pop("https_proxy", None)
 
-app = Flask(__name__, static_folder=FRONTEND_FOLDER, static_url_path="/")
-CORS(app)
-
+# Point Flask to React build folder
+app = Flask(__name__, static_folder="../frontend/build", static_url_path="/")
+CORS(app)  # allow requests from frontend
 
 # -------------------------------
 # Serve React frontend
@@ -27,9 +31,6 @@ def serve_frontend(path):
 # -------------------------------
 # Initialize Groq client
 # -------------------------------
-# -------------------------------
-# Initialize Groq client safely
-# -------------------------------
 _client = None
 def get_client():
     global _client
@@ -37,18 +38,9 @@ def get_client():
         key = os.environ.get("GROQ_API_KEY")
         if not key:
             raise RuntimeError("GROQ_API_KEY is not set")
-
-        # Remove proxy environment variables that can break Groq client
-        os.environ.pop("HTTP_PROXY", None)
-        os.environ.pop("HTTPS_PROXY", None)
-        os.environ.pop("http_proxy", None)
-        os.environ.pop("https_proxy", None)
-
-        # Create Groq client
+        # ✅ Fixed: removed `proxies` argument
         _client = Groq(api_key=key)
-
     return _client
-
 
 
 # -------------------------------
