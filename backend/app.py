@@ -5,9 +5,13 @@ from groq import Groq
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 
-# Point Flask to React build folder
-app = Flask(__name__, static_folder="../frontend/build", static_url_path="/")
-CORS(app)  # allow requests from frontend
+# Absolute path to frontend build folder
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+FRONTEND_FOLDER = os.path.join(BASE_DIR, "../frontend/build")
+
+app = Flask(__name__, static_folder=FRONTEND_FOLDER, static_url_path="/")
+CORS(app)
+
 
 # -------------------------------
 # Serve React frontend
