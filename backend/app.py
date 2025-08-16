@@ -4,6 +4,7 @@ import os
 from groq import Groq
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
+import traceback
 
 # ---------------------------------------
 # Fix Render proxy issue (remove env vars)
@@ -46,21 +47,21 @@ def get_client():
 # -------------------------------
 # Summarize function
 # -------------------------------
-def summarize(transcript: str, instruction: str) -> str:
-    client = get_client()
-    resp = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-        temperature=0.2,
-        max_tokens=900,
-        messages=[
-            {"role": "system",
-             "content": "You summarize meeting transcripts into clean, structured outputs. Prefer bullet points, headings, and action items."},
-            {"role": "user",
-             "content": f"Instruction:\n{instruction}\n\nTranscript:\n{transcript}"}
-        ],
-    )
-    return resp.choices[0].message.content or ""
 
+@app.route("/summarize", methods=["POST"])
+def summarize_route():
+    data = request.json
+    transcript = data.get("transcript")
+    prompt = data.get("prompt", "Summarize in bullet points")
+    if not transcript:
+        return jsonify({"error": "Transcript is required"}), 400
+    try:
+        summary = summarize(transcript, prompt)
+        return jsonify({"summary": summary})
+    except Exception as e:
+        print("🔥 Error in /summarize:", str(e))
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
 
 # -------------------------------
 # API Routes
