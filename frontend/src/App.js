@@ -13,11 +13,12 @@ function App() {
     setSendResults([]);
 
     try {
-      const response = await fetch("http://127.0.0.1:5000/summarize", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ transcript: text, prompt: "Summarize in bullet points" }),
-      });
+     const response = await fetch("/summarize", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ transcript: text, prompt: "Summarize in bullet points" }),
+});
+
 
       const data = await response.json();
       if (data.summary) setSummary(data.summary);
@@ -39,11 +40,12 @@ function App() {
     }
 
     try {
-      const response = await fetch("http://127.0.0.1:5000/share", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ summary, recipients: recipientList }),
-      });
+      const response = await fetch("/share", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ summary, recipients: recipientList }),
+});
+
 
       const data = await response.json();
       if (data.status === "success") {
