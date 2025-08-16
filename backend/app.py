@@ -50,14 +50,15 @@ def get_client():
 def summarize(transcript, prompt):
     client = get_client()
     response = client.chat.completions.create(
-        model="llama-3.1-70b-versatile",   # You can change to another Groq model
+        model="llama-3.3-70b-versatile",   # ✅ new supported model
         messages=[
             {"role": "system", "content": prompt},
-            {"role": "user", "content": transcript}
+            {"role": "user", "content": transcript},
         ],
         temperature=0.7,
     )
     return response.choices[0].message.content.strip()
+
 
 
 # -------------------------------
