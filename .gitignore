@@ -1,0 +1,8 @@
+# Environment file
+.env
+
+# Node modules
+frontend/node_modules/
+
+# Python cache
+backend/__pycache__/
