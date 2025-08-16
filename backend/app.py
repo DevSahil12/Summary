@@ -35,6 +35,10 @@ def get_client():
         if not key:
             raise RuntimeError("GROQ_API_KEY is not set")
         _client = Groq(api_key=key)
+          os.environ.pop("HTTP_PROXY", None)
+        os.environ.pop("HTTPS_PROXY", None)
+        os.environ.pop("http_proxy", None)
+        os.environ.pop("https_proxy", None)
     return _client
 
 
