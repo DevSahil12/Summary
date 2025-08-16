@@ -70,18 +70,7 @@ def summarize_route():
 def health_check():
     return "Backend is running!"
 
-@app.route("/summarize", methods=["POST"])
-def summarize_route():
-    data = request.json
-    transcript = data.get("transcript")
-    prompt = data.get("prompt", "Summarize in bullet points")
-    if not transcript:
-        return jsonify({"error": "Transcript is required"}), 400
-    try:
-        summary = summarize(transcript, prompt)
-        return jsonify({"summary": summary})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+
 
 @app.route("/share", methods=["POST"])
 def share():
