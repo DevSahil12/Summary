@@ -5,19 +5,20 @@ from groq import Groq
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 
-app = Flask(__name__, static_folder="frontend/src")  # single Flask app
+app = Flask(__name__, static_folder="../frontend/src")  # single Flask app
 CORS(app)  # allow requests from frontend
 
 # -------------------------------
 # Serve frontend
 # -------------------------------
-@app.route("/")
-def serve_index():
-    return send_from_directory(app.static_folder, "index.html")
-
+@app.route("/", defaults={"path": ""})
 @app.route("/<path:path>")
-def serve_static(path):
-    return send_from_directory(app.static_folder, path)
+def serve_frontend(path):
+    full_path = os.path.join(app.static_folder, path)
+    if path != "" and os.path.exists(full_path):
+        return send_from_directory(app.static_folder, path)
+    # default to index.html if path does not exist
+    return send_from_directory(app.static_folder, "index.html")
 
 # -------------------------------
 # Initialize Groq client
